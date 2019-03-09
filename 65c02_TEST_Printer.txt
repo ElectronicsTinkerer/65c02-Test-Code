@@ -42,7 +42,7 @@ test_loop:
 
 acia_putc:              ldx #$68		;Delay
 acia_putc_delay_loop:   dex			;Decrement counter (2 cycles)
-                        beq acia_putc_delay_loop		;(3 cycles)
+                        bne acia_putc_delay_loop		;loop until x = 0 (3 cycles)
                         sta ACIA_DATA		;Output the character
                         rts			;Return
 			   
