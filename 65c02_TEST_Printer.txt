@@ -37,13 +37,13 @@ test_loop:
                         lda #'T'
                         jsr acia_putc
 
-                        bra test_loop	;Keep printing "test"
+                        bra test_loop		;Keep printing "test"
 
 
 acia_putc:              ldx #$68		;Delay
-acia_putc_delay_loop:   dex			;Decriment counter (2 cycles)
+acia_putc_delay_loop:   dex			;Decrement counter (2 cycles)
                         beq acia_putc_delay_loop		;(3 cycles)
-                        sta ACIA_DATA	;Output the character
+                        sta ACIA_DATA		;Output the character
                         rts			;Return
 			   
 			   
