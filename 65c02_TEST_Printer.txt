@@ -1,0 +1,49 @@
+                        .setcpu "65C02"
+
+                        ACIA_DATA       = $7F00
+                        ACIA_STATUS     = $7F01
+                        ACIA_COMMAND    = $7F02
+                        ACIA_CONTROL    = $7F03
+
+                        .segment "VECTORS"
+
+                        .word nmi
+                        .word reset
+                        .word irq
+
+                        .code
+
+reset:                  jmp main		;Start of code	
+nmi:                    rti			;Ignore ghost interrupts	
+irq:                    rti			;Ignore ghost interrupts
+
+main:                   sei			;Disable IRQ
+                        cld			;Clear decimal mode
+                        ldx #$FF		;Init stack
+                        txs
+init_acia:					;Setup ACIA with 19200 BAUD, no parity, no interrupts, no handshaking
+                        lda #%00001011
+                        sta ACIA_COMMAND
+                        lda #%00011111
+                        sta ACIA_CONTROL
+
+test_loop:
+                        lda #'T'
+                        jsr acia_putc
+                        lda #'E'
+                        jsr acia_putc
+                        lda #'S'
+                        jsr acia_putc
+                        lda #'T'
+                        jsr acia_putc
+
+                        bra test_loop	;Keep printing "test"
+
+
+acia_putc:              ldx #$68		;Delay
+acia_putc_delay_loop:   dex			;Decriment counter (2 cycles)
+                        beq acia_putc_delay_loop		;(3 cycles)
+                        sta ACIA_DATA	;Output the character
+                        rts			;Return
+			   
+			   
